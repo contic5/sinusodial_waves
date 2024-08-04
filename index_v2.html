@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sinusodial Waves</title>
+        <link href="mystyle.css" type='text/css' rel='stylesheet'>
+    </head>
+    <body>
+    <main>
+    <h1>Sinusodial Waves</h1>
+    
+    <h2>How the Sinusodial Wave Works</h2>
+    <h3>The Math</h3>
+    <p>Sinusodial means that something is related to the sin function. The sin function is a triganometry function that finds the length of the opposite side of a right triangle divided by the hypotenuse of the triangle.</p>
+    <p>We can use the sin function to create an oscilator, which is like a cuckoo clock or pendulum that swings back and forth.</p>
+    <p>The sin function takes an angle and outputs a y value between -1 and 1.</p>
+    <h3>The Programming</h3>
+    <p>If we change the angle at a consistent rate, we can simulate movement. The offset (distance from the center), equals the wave_height multiplied by sin(time). If wave_height equals 200, the circle will go from offset -200 to offset 200.</p>
+    <p>A series of circles are spread out evenly over the x axis. Each point has a slightly different starting angle. Every frame, each circle has its angle increased. This makes it seem like the circles are moving</p>
+    <p>A similar process is used for the vertical waves. The canvas <b>must be a square</b> for the effect to work.</p>
+    <h3>Drawing</h3>
+    <p>For each frame:</p>
+    <ul>
+    <li>A black rectangle is drawn to clear the screen</li>
+    <li>Each circle is moved</li>
+    <li>Each circle is then drawn on screen.</li>
+    </ul>
+    
+    <h3>Additional Information</h3>
+    <p><a href="https://en.wikipedia.org/wiki/Sine_and_cosine">Wikipedia Sin and Cosine</a></p>
+        
+    <h2>Settings</h2>
+    <form onchange="change_settings()">
+    <table>
+    <tbody>
+    <tr>
+    <td>
+    <label for="show_horizontal_waves">Show Horizontal Waves</label>
+    <input type="checkbox" id="show_horizontal_waves" onclick="change_settings()" checked>
+    </td>
+        
+    <td>
+    <label for="show_vertical_waves">Show Vertical Waves</label>
+    <input type="checkbox" id="show_vertical_waves" onclick="change_settings()" checked>
+    </td>
+    </tr>
+        
+    <tr>
+    <td>
+    <label for="horizontal_wave_color">Horizontal Wave Color</label>
+    <input type="color" id="horizontal_wave_color" value="#39FF14">
+    </td>
+        
+    <td>
+    <label for="vertical_wave_color">Vertical Wave Color</label>
+    <input type="color" id="vertical_wave_color" value="#1B03A3">
+    </td>
+        
+    <td>
+    <label for="background_color">Background Color</label>
+    <input type="color" id="background_color" value="#000000">
+    </td>
+    </tr>
+        
+    <tr>
+    
+    <td>
+    <label for="wave_height">Wave Height</label>
+    <input type="number" id="wave_height" value=200 min=50 max=600>
+    </td>
+    
+    <td>
+    <label for="wave_width">Wave Width</label>
+    <input type="number" id="wave_width" value=200 min=50 max=600>
+    </td>
+    </tr>
+    
+    <tr>
+    <td>
+    <button onclick="reset_settings()" type="button">Reset Settings</button>    
+    </td>    
+    </tr>
+    </tbody>
+    </table>
+    </form>
+    
+    <h2>The Sinusodial Wave</h2>
+    <canvas id="mycanvas" width="600" height="600">
+    
+    </canvas>
+    </main>
+    <script>
+    class Circle
+    {
+        constructor(pos,start_t)
+        {
+            this.pos=pos;
+            this.radius=10;
+            this.t=start_t;
+        }
+        move()
+        {
+            this.t-=time_change;
+            if(this.t<2*Math.PI)
+            {
+                this.t+=2*Math.PI;
+            }
+            this.offset_y=Math.sin(this.t)*(wave_height/2);
+            this.offset_x=Math.sin(this.t)*(wave_width/2);
+        }
+        draw_horizontal_waves()
+        {
+            ctx.fillStyle=horizontal_wave_color;
+
+            //Draw upper wave and lower wave
+            ctx.beginPath();
+            ctx.ellipse(this.pos,mid_y+this.offset_y,this.radius,this.radius,0,0,2*Math.PI);
+            ctx.fill();
+            ctx.closePath();
+            
+            ctx.beginPath();
+            ctx.ellipse(this.pos,mid_y-this.offset_y,this.radius,this.radius,0,0,2*Math.PI);
+            ctx.fill();
+            ctx.closePath();
+        }
+        draw_vertical_waves()
+        {
+            ctx.fillStyle=vertical_wave_color;
+
+            //Draw left wave and right wave
+            ctx.beginPath();
+            ctx.ellipse(mid_x+this.offset_x,this.pos,this.radius,this.radius,0,0,2*Math.PI);
+            ctx.fill();
+            ctx.closePath();
+            
+            ctx.beginPath();
+            ctx.ellipse(mid_x-this.offset_x,this.pos,this.radius,this.radius,0,0,2*Math.PI);
+            ctx.fill();
+            ctx.closePath();
+        }
+        draw()
+        {
+            this.draw_horizontal_waves();
+            this.draw_vertical_waves();
+        }
+    }
+    function clear()
+    {
+        ctx.fillStyle=background_color;
+        ctx.fillRect(0,0,c.width,c.height); 
+    }
+    function draw()
+    {
+        clear();
+        //move objects
+        for(let circle of circles)
+        {
+            circle.move();
+        }
+        
+        //draw objects
+        if(show_horizontal_waves)
+        {
+            for(let circle of circles)
+            {
+                circle.draw_horizontal_waves();
+            }
+        }
+        if(show_vertical_waves)
+        {
+            for(let circle of circles)
+            {
+                circle.draw_vertical_waves();
+            }
+        }
+       
+    }
+    function reset_settings()
+    {
+        document.getElementById("horizontal_wave_color").value="#39FF14";
+        document.getElementById("vertical_wave_color").value="#1B03A3";
+        document.getElementById("background_color").value="#000000";
+        document.getElementById("wave_height").value=200;
+        document.getElementById("wave_width").value=200;
+        document.getElementById("show_horizontal_waves").checked=true;
+        document.getElementById("show_vertical_waves").checked=true;
+        change_settings();
+    }
+    function change_settings()
+    {
+        horizontal_wave_color=document.getElementById("horizontal_wave_color").value;
+        vertical_wave_color=document.getElementById("vertical_wave_color").value;
+        background_color=document.getElementById("background_color").value;
+        wave_height=document.getElementById("wave_height").value;
+        wave_width=document.getElementById("wave_width").value;
+        show_horizontal_waves=document.getElementById("show_horizontal_waves").checked;
+        show_vertical_waves=document.getElementById("show_vertical_waves").checked;
+    }
+    //Settings variables
+    let show_horizontal_waves=true;
+    let show_vertical_waves=true;
+        
+    //Color variables
+    let horizontal_wave_color="#39FF14";
+    let vertical_wave_color="#1B03A3";
+    let background_color="#000000" ;   
+    
+    //Circle and angle variables
+    let total_circles=150;    
+    let angle_change=0.05;
+    let time_change=0.1;
+    
+    //Wave variables
+    let wave_height=200;
+    let wave_width=200;
+    
+    let c=document.getElementById("mycanvas");
+    let ctx=c.getContext("2d");
+    let circles=[];
+    let mid_x=c.width/2;
+    let mid_y=c.height/2;
+    
+    let start_angle=0;
+    let circle_distance=c.width/total_circles;
+    for(let i=0;i<total_circles/2+1;i++)
+    {
+        circles.push(new Circle(mid_x+i*circle_distance,start_angle));
+        circles.push(new Circle(mid_x-i*circle_distance,start_angle));
+        start_angle+=angle_change;
+    }
+  
+    setInterval(draw,50);
+    </script>
+    </body>
+</html>

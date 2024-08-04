@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Animation</title>
+        <link href="mystyle.css" type='text/css' rel='stylesheet'>
+    </head>
+    <body>
+    <h1>Snowman Drawing</h1>
+    <canvas id="mycanvas" width="1000" height="500">
+    
+    </canvas>
+    <script>
+    class Circle
+    {
+        constructor(x)
+        {
+            this.x=x
+            this.y=c.height/2;
+            this.radius=10;
+            this.t=x;
+        }
+        move()
+        {
+            this.t+=0.1;
+            this.y=Math.sin(this.t)*(c.height/2)+c.height/2;
+        }
+        draw()
+        {
+            ctx.fillStyle="#ffffff";
+            ctx.beginPath();
+            ctx.ellipse(this.x,this.y,this.radius,this.radius,0,0,2*Math.PI)
+            ctx.fill();
+            ctx.closePath();
+        }
+        notvisible()
+        {
+            return this.x<0||this.x>c.width||this.y<0||this.y>c.height;
+        }
+    }
+    function clear()
+    {
+        ctx.fillStyle="#000000";
+        ctx.fillRect(0,0,c.width,c.height); 
+    }
+    function draw()
+    {
+        clear();
+        //move objects
+        for(let circle of circles)
+        {
+            circle.move();
+        }
+        
+        //draw objects
+        for(let circle of circles)
+        {
+            circle.draw();
+        }
+       
+    }
+    let c=document.getElementById("mycanvas");
+    let ctx=c.getContext("2d");
+    let circles=[];
+        
+    for(let i=0;i<c.width/10;i++)
+    {
+        circles.push(new Circle(i*10));
+    }
+  
+    setInterval(draw,50);
+    </script>
+    </body>
+</html>

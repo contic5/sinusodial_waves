@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sinusodial Waves</title>
+        <link href="mystyle.css" type='text/css' rel='stylesheet'>
+    </head>
+    <body>
+    <h1>Sinusodial Waves</h1>
+    <canvas id="mycanvas" width="1000" height="500">
+    
+    </canvas>
+    <script>
+    class Circle
+    {
+        constructor(x,start_t)
+        {
+            this.x=x
+            this.y=c.height/2;
+            this.radius=10;
+            this.t=start_t;
+        }
+        move()
+        {
+            this.t-=0.1;
+            if(this.t<2*Math.PI)
+            {
+                this.t+=2*Math.PI;
+            }
+            this.y=Math.sin(this.t)*(c.height/2)+c.height/2;
+        }
+        draw()
+        {
+            ctx.fillStyle="#ffffff";
+            ctx.beginPath();
+            
+            //Draw upper wave and lower wave
+            ctx.ellipse(this.x,this.y,this.radius,this.radius,0,0,2*Math.PI);
+            
+            //ctx.ellipse(this.x,c.height-this.y,this.radius,this.radius,0,0,2*Math.PI);
+            
+            ctx.fill();
+            ctx.closePath();
+        }
+        notvisible()
+        {
+            return this.x<0||this.x>c.width||this.y<0||this.y>c.height;
+        }
+    }
+    function clear()
+    {
+        ctx.fillStyle="#000000";
+        ctx.fillRect(0,0,c.width,c.height); 
+    }
+    function draw()
+    {
+        clear();
+        //move objects
+        for(let circle of circles)
+        {
+            circle.move();
+        }
+        
+        //draw objects
+        for(let circle of circles)
+        {
+            circle.draw();
+        }
+       
+    }
+    //Settings variables
+    let total_circles=200;    
+    let start_angle=0;
+    let angle_change=0.05;
+    let time_change=0.1;
+    
+    let c=document.getElementById("mycanvas");
+    let ctx=c.getContext("2d");
+    let circles=[];
+    let mid_x=c.width/2;
+    
+    let circle_distance=c.width/total_circles;
+    for(let i=0;i<total_circles/2+1;i++)
+    {
+        circles.push(new Circle(mid_x+i*circle_distance,start_angle));
+        circles.push(new Circle(mid_x-i*circle_distance,start_angle));
+        start_angle+=angle_change;
+    }
+  
+    setInterval(draw,50);
+    </script>
+    </body>
+</html>
